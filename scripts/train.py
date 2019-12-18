@@ -4,6 +4,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 # Keras
 import keras
@@ -44,25 +45,30 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 keras.optimizers.Adam(lr=0.0003,beta_1=0.9,beta_2=0.999,epsilon=None,decay=0.0)
 
-# Loading Cross-Validation Set
-val_color = np.load("../data/val/npy/color/1576647627.53.npy")
-val_depth = np.load("../data/val/npy/depth/1576647627.53.npy")
-val_joy   = np.load("../data/val/npy/joy/1576647627.53.npy")
+# --- Load Cross-Validation Set ---
+val_npy_list = os.listdir("../data/val/npy/color/")
+val_npy = val_npy_list[0]
+val_color = np.load("../data/val/npy/color/"+val_npy)
+val_depth = np.load("../data/val/npy/depth/"+val_npy)
+val_joy   = np.load("../data/val/npy/joy/"+val_npy)
 # compose color and depth
 val_depth = np.reshape(val_depth,(128,1,84,84))
 val_rgbd  = np.append(val_color,val_depth,axis=1)
 val_rgbd  = np.reshape(val_rgbd,(128,84,84,4))
 
-# Loading Dataset
+# --- Optimize Model ---
 directory = os.listdir("../data/train/npy/color")
-# History List
-loss_hist = []
+# Training and Validation Loss History List
+train_hist = []
 val_hist = []
 hist_cnt = 0
-# Optimizing Manner
+
 for i in range(EPOCHS):
+    # Defining the list of this epoch loss history
+    epoch_train_loss = []
+    epoch_val_loss   = []
+
     for data in directory:
-        hist_cnt += 1
         train_color = np.load("../data/train/npy/color/"+data)
         train_depth = np.load("../data/train/npy/depth/"+data)
         train_joy   = np.load("../data/train/npy/joy/"+data)
@@ -72,20 +78,30 @@ for i in range(EPOCHS):
         train_rgbd  = np.reshape(train_rgbd,(128,84,84,4))
         #hist = model.fit(train_rgbd, train_joy,batch_size=1,verbose=1,epochs=1,validation_split=0.2)
         hist = model.fit(train_rgbd, train_joy,batch_size=1,verbose=1,epochs=1,validation_data=(val_rgbd,val_joy))
-        loss_hist.append(hist.history["loss"][0])
-        val_hist.append(hist.history["val_loss"][0])
-        print hist.history["loss"]
+        epoch_train_loss.append(hist.history["loss"][0])
+        epoch_val_loss.append(hist.history["val_loss"][0])
+    a = np.average(epoch_train_loss)
+    train_hist.append(a)
+    a = np.average(epoch_val_loss)
+    val_hist.append(a)
+    hist_cnt += 1
+    print str(hist_cnt)+"th Epoch"
 
-# Display Trainig Loss
-plt.plot(range(1,hist_cnt+1),loss_hist,label="Training Loss")
+# --- Display Trainig Loss ---
+plt.plot(range(1,hist_cnt+1),train_hist,label="Training Loss")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend(loc="upper right")
 plt.show()
 
-# Display Validation Loss
+# --- Display Validation Loss ---
 plt.plot(range(1,hist_cnt+1),val_hist,label="Validation Loss")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend(loc="upper right")
 plt.show()
+
+# --- Save Weight ---
+time_now = str(time.time())
+model.save_weights("../weights/"+time_now+".h5")
+print "Saved weight"

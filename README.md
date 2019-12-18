@@ -20,11 +20,11 @@
 ## How to use
  - Taking Data
 ```
-$ 
+$ not yet
 ```
  - Generating Data from Rosbag
 ```
-$ 
+$ not yet
 ```
  - Training
  ```
@@ -32,5 +32,5 @@ $
 ```
  - Test using the Robot
  ```
-$ 
+$ not yet
 ```
