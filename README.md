@@ -1,6 +1,6 @@
 # Person Following using End-to-End Deep Learning
 ## Overview
- This program is used for it which the robot follows person. The robot has [Realsense D435 camera](https://www.intelrealsense.com/depth-camera-d435/) and [Kobuki base](http://kobuki.yujinrobot.com/about2/). I'll present about this research at [SICE SI in 2019](https://www.sice-si.org/conf/si2019/).
+ This program is used for it which the robot follows person. The robot has [Realsense D435 camera](https://www.intelrealsense.com/depth-camera-d435/) and [Kobuki base](http://kobuki.yujinrobot.com/about2/).
 
 ## Description
  
@@ -28,7 +28,7 @@ $ not yet
 ```
  - Training
  ```
-$ 
+$ not yet
 ```
  - Test using the Robot
  ```
