@@ -18,7 +18,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1576656848.74.h5"
+WEIGHT_NAME = "1576719356.28.h5"
 
 class PersonFollow:
     def __init__(self):
@@ -43,7 +43,6 @@ class PersonFollow:
         except CvBridgeError as error_msg:
             print(error_msg)
     
-
     def getRGBD(self):
         # convert depth image to (float64, 1*128*128)
         resized_depth_img = cv2.resize(self.depth_img,dsize=(84,84))
@@ -65,7 +64,7 @@ class PersonFollow:
 
         resized_rgbd_img  = np.append(resized_color_img,resized_depth_img,axis=1)
         resized_rgbd_img  = np.reshape(resized_rgbd_img,(1,84,84,4))
-        
+        print resized_rgbd_img
         return resized_rgbd_img
 
     def getJoy(self):

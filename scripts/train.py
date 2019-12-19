@@ -13,7 +13,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 30 
+EPOCHS = 5 
 
 # Initial Setting
 model = models.Sequential()
@@ -80,9 +80,9 @@ for i in range(EPOCHS):
         hist = model.fit(train_rgbd, train_joy,batch_size=1,verbose=1,epochs=1,validation_data=(val_rgbd,val_joy))
         epoch_train_loss.append(hist.history["loss"][0])
         epoch_val_loss.append(hist.history["val_loss"][0])
-    train_loss_ave = np.average(epoch_train_loss)
+    train_loss_avg = np.average(epoch_train_loss)
     train_hist.append(train_loss_avg)
-    val_loss_ave   = np.average(epoch_val_loss)
+    val_loss_avg   = np.average(epoch_val_loss)
     val_hist.append(val_loss_avg)
     hist_cnt += 1
     print str(hist_cnt)+"th Epoch"
