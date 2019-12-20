@@ -96,9 +96,9 @@ class GenTrainData:
         train_joy   = np.delete(all_joy,0,axis=0)
         # save each data
         time = str(rospy.get_time())
-        np.save('../data/'+DIR_TYPE+'/npy/color/'+time+'.npy',train_color)
-        np.save('../data/'+DIR_TYPE+'/npy/depth/'+time+'.npy',train_depth)
-        np.save('../data/'+DIR_TYPE+'/npy/joy/'+time+'.npy',train_joy)
+        np.save('../data/'+DIR_TYPE+'/color/'+time+'.npy',train_color)
+        np.save('../data/'+DIR_TYPE+'/depth/'+time+'.npy',train_depth)
+        np.save('../data/'+DIR_TYPE+'/joy/'+time+'.npy',train_joy)
         print "training data "+time+".npy is saved in /data/"+DIR_TYPE+"/train/npy/ each director."
 
 if __name__ == '__main__':
