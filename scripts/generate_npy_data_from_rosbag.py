@@ -4,6 +4,10 @@
 import numpy as np
 import random
 
+# For Debug
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+
 # ROS
 import rospy
 import cv2
@@ -12,8 +16,8 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 # Const definision
-DATA_LENGTH = 128
-DIR_TYPE = "train"# train, val or test. 
+DATA_LENGTH = 1
+DIR_TYPE = "val"# train, val or test. 
 
 class GenTrainData:
     def __init__(self):
@@ -43,24 +47,15 @@ class GenTrainData:
         self.joy_input["theta"] = msg.angular.z
 
     def getTrainDepth(self):
-        # convert image to (float64, 1*84*84)
+        # convert image to (uint16, 1*84*84)
         resized_depth_img = cv2.resize(self.depth_img,dsize=(84,84))
-        resized_depth_img = resized_depth_img.astype(np.float64)
-        resized_depth_img = resized_depth_img.reshape(1,84,84)
-        # scaling depth from 0 to 1
-        for h_i in range(84):
-            for w_i in range(84):
-                if resized_depth_img[0][h_i][w_i] < 1 or 3000 < resized_depth_img[0][h_i][w_i]:
-                    resized_depth_img[0][h_i][w_i] = 0
-                else:
-                    resized_depth_img[0][h_i][w_i] = 1-float(resized_depth_img[0][h_i][w_i]-30)/2980
+        resized_depth_img = resized_depth_img.reshape(1,84,84,1)
         return resized_depth_img
 
     def getTrainColor(self):
-        # convert image to (float64, 3*84*84)
+        # convert image to (uint16, 3*84*84)
         resized_color_img = cv2.resize(self.color_img,dsize=(84,84))
-        resized_color_img = resized_color_img.astype(np.float64)
-        resized_color_img = resized_color_img.reshape(1,3,84,84)
+        resized_color_img = resized_color_img.reshape(1,84,84,3)
         return resized_color_img
     
     def getTrainJoy(self):
@@ -73,32 +68,36 @@ class GenTrainData:
         r = rospy.Rate(10) # main loop Hz
         img_num = 0
         # create first black image
-        all_color = np.zeros(3*84*84).reshape(1,3,84,84)
-        all_depth = np.zeros(1*84*84).reshape(1,84,84)
+        all_color = np.zeros(84*84*3).reshape(1,84,84,3)
+        all_color = all_color.astype(np.uint8)
+        all_depth = np.zeros(84*84*1).reshape(1,84,84,1)
+        all_depth = all_depth.astype(np.uint8)
         all_joy   = np.zeros(2).reshape(1,2)
         while not rospy.is_shutdown() and img_num < DATA_LENGTH:
             r.sleep()
             img_num = img_num + 1
+            print img_num
             # getting 1 data
             color_data = self.getTrainColor()
             depth_data = self.getTrainDepth()
             joy_data   = self.getTrainJoy()
-            # appending a frame
+
             all_color = np.append(all_color,color_data,axis=0)
             all_depth = np.append(all_depth,depth_data,axis=0)
             all_joy   = np.append(all_joy,joy_data,axis=0)
-            print img_num
+            print all_color.dtype
+            plt.imshow(all_color[1])
+            plt.pause(2)
+
         # delete first black image
-        print all_color.shape
         train_color = np.delete(all_color,0,axis=0)
-        print train_color.shape
         train_depth = np.delete(all_depth,0,axis=0)
         train_joy   = np.delete(all_joy,0,axis=0)
         # save each data
         time = str(rospy.get_time())
-        np.save('../data/'+DIR_TYPE+'/color/'+time+'.npy',train_color)
-        np.save('../data/'+DIR_TYPE+'/depth/'+time+'.npy',train_depth)
-        np.save('../data/'+DIR_TYPE+'/joy/'+time+'.npy',train_joy)
+        #np.save('../data/'+DIR_TYPE+'/color/'+time+'.npy',train_color)
+        #np.save('../data/'+DIR_TYPE+'/depth/'+time+'.npy',train_depth)
+        #np.save('../data/'+DIR_TYPE+'/joy/'+time+'.npy',train_joy)
         print "training data "+time+".npy is saved in /data/"+DIR_TYPE+"/train/npy/ each director."
 
 if __name__ == '__main__':

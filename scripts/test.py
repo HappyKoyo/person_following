@@ -18,7 +18,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1576827705.12.h5"
+WEIGHT_NAME = "1576921462.1.h5"
 
 class PersonFollow:
     def __init__(self):
@@ -46,24 +46,14 @@ class PersonFollow:
     def getRGBD(self):
         # convert depth image to (float64, 1*128*128)
         resized_depth_img = cv2.resize(self.depth_img,dsize=(84,84))
-        resized_depth_img = resized_depth_img.astype(np.float64)
-        resized_depth_img = resized_depth_img.reshape(1,84,84)
-        # scaling depth from 0 to 1
-        for h_i in range(84):
-            for w_i in range(84):
-                if resized_depth_img[0][h_i][w_i] < 1 or 3000 < resized_depth_img[0][h_i][w_i]:
-                    resized_depth_img[0][h_i][w_i] = 0
-                else:
-                    resized_depth_img[0][h_i][w_i] = 1-float(resized_depth_img[0][h_i][w_i]-30)/2980
-        resized_depth_img = resized_depth_img.reshape(1,1,84,84)
+        resized_depth_img = resized_depth_img.reshape(1,84,84,1)
 
         # reshape the color image, and compose the depth and the color image
         resized_color_img = cv2.resize(self.color_img,dsize=(84,84))
-        resized_color_img = resized_color_img.astype(np.float64)
-        resized_color_img = resized_color_img.reshape(1,3,84,84)
-
-        resized_rgbd_img  = np.append(resized_color_img,resized_depth_img,axis=1)
-        resized_rgbd_img  = np.reshape(resized_rgbd_img,(1,84,84,4))
+        resized_color_img = resized_color_img.reshape(1,84,84,3)
+        
+        # compose color and depth image (1,84,84,4)
+        resized_rgbd_img  = np.append(resized_color_img,resized_depth_img,axis=3)
         print resized_rgbd_img
         return resized_rgbd_img
 

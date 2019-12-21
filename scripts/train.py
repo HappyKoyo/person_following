@@ -13,7 +13,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 50 
+EPOCHS = 5
 
 # Initial Setting
 model = models.Sequential()
@@ -42,12 +42,12 @@ model.add(Dense(2))
 model.compile(optimizer='adam',
               loss=losses.mean_squared_error,
               metrics=['accuracy'])
-keras.optimizers.Adam(lr=0.003,beta_1=0.9,beta_2=0.999,epsilon=None,decay=0.0)
+keras.optimizers.Adam(lr=0.0003,beta_1=0.9,beta_2=0.999,epsilon=None,decay=0.0)
 
 
 # --- Optimize Model ---
-train_dir = os.listdir("../data/train/color")
-val_dir   = os.listdir("../data/val/color")
+TRAIN_DIR = os.listdir("../data/train/color")
+VAL_DIR   = os.listdir("../data/val/color")
 
 # Training and Validation Loss History List
 train_hist = []
@@ -60,28 +60,25 @@ for i in range(EPOCHS):
     epoch_val_loss   = []
 
     # --- Optimize Using Training Set ---
-    for data in train_dir:
+    for data in TRAIN_DIR:
         train_color = np.load("../data/train/color/"+data)
         train_depth = np.load("../data/train/depth/"+data)
         train_joy   = np.load("../data/train/joy/"+data)
         # compose color and depth
-        train_depth = np.reshape(train_depth,(128,1,84,84))
-        train_rgbd  = np.append(train_color,train_depth,axis=1)
-        train_rgbd  = np.reshape(train_rgbd,(128,84,84,4))
+        #train_depth = np.reshape(train_depth,(128,1,84,84))
+        train_rgbd  = np.append(train_color,train_depth,axis=3)
+        #train_rgbd  = np.reshape(train_rgbd,(128,84,84,4))
 
         hist = model.fit(train_rgbd, train_joy,batch_size=128,verbose=1,epochs=1,validation_split=0.0)
         epoch_train_loss.append(hist.history["loss"][0])
         
     # --- Evaluate Using Load Cross-Validation Set ---
-    for data in val_dir:
+    for data in VAL_DIR:
         val_color = np.load("../data/val/color/"+data)
         val_depth = np.load("../data/val/depth/"+data)
         val_joy   = np.load("../data/val/joy/"+data)
-        print "aaa is ",str(val_joy.shape)
-        # compose color and depth
-        val_depth = np.reshape(val_depth,(128,1,84,84))
-        val_rgbd  = np.append(val_color,val_depth,axis=1)
-        val_rgbd  = np.reshape(val_rgbd,(128,84,84,4))
+        # compose color and depth image (128,84,84,4)
+        val_rgbd  = np.append(val_color,val_depth,axis=3)
         # append to all rgbd and joy data
         val_loss = model.evaluate(val_rgbd,val_joy,batch_size=128)
         epoch_val_loss.append(val_loss)
