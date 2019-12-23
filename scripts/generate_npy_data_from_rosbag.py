@@ -16,8 +16,8 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 # Const definision
-DATA_LENGTH = 1
-DIR_TYPE = "val"# train, val or test. 
+DATA_LENGTH = 128
+DIR_TYPE = "train"# train, val or test. 
 
 class GenTrainData:
     def __init__(self):
@@ -85,9 +85,6 @@ class GenTrainData:
             all_color = np.append(all_color,color_data,axis=0)
             all_depth = np.append(all_depth,depth_data,axis=0)
             all_joy   = np.append(all_joy,joy_data,axis=0)
-            print all_color.dtype
-            plt.imshow(all_color[1])
-            plt.pause(2)
 
         # delete first black image
         train_color = np.delete(all_color,0,axis=0)
@@ -95,9 +92,9 @@ class GenTrainData:
         train_joy   = np.delete(all_joy,0,axis=0)
         # save each data
         time = str(rospy.get_time())
-        #np.save('../data/'+DIR_TYPE+'/color/'+time+'.npy',train_color)
-        #np.save('../data/'+DIR_TYPE+'/depth/'+time+'.npy',train_depth)
-        #np.save('../data/'+DIR_TYPE+'/joy/'+time+'.npy',train_joy)
+        np.save('../data/'+DIR_TYPE+'/color/'+time+'.npy',train_color)
+        np.save('../data/'+DIR_TYPE+'/depth/'+time+'.npy',train_depth)
+        np.save('../data/'+DIR_TYPE+'/joy/'+time+'.npy',train_joy)
         print "training data "+time+".npy is saved in /data/"+DIR_TYPE+"/train/npy/ each director."
 
 if __name__ == '__main__':

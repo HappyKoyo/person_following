@@ -18,7 +18,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1576921462.1.h5"
+WEIGHT_NAME = "1577084456.3.h5"
 
 class PersonFollow:
     def __init__(self):
