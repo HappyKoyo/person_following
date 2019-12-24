@@ -35,7 +35,7 @@ for data in TARGET_FILES:
     print "mirrored data is saved"
 
     # visualize
-    mirrored_depth = mirrored_depth.reshape(128,84,84)
+    #mirrored_depth = mirrored_depth.reshape(128,84,84)
     #plt.imshow(mirrored_color[0])
     #plt.pause(2)
     #plt.imshow(mirrored_depth[0],cmap="gray")

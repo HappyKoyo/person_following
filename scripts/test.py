@@ -18,7 +18,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1577084456.3.h5"
+WEIGHT_NAME = "1577174349.4.h5"
 
 class PersonFollow:
     def __init__(self):
@@ -68,16 +68,16 @@ class PersonFollow:
         # Conv2 40 -> 18
         model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu'))
         # Conv3 18 -> 7
-        #model.add(Conv2D(64, kernel_size=5, strides=(2,2), activation='relu'))
+        model.add(Conv2D(64, kernel_size=5, strides=(2,2), activation='relu'))
         # Flatten 7*7*64 -> 3136
         model.add(Flatten())
-        #model.add(Dense(128))
+        model.add(Dense(128))
         model.add(Dense(64))
         # LSTM
         model.add(Reshape((1,64)))
         model.add(LSTM(64))
-        #model.add(Reshape((1,64)))
-        #model.add(LSTM(64))
+        model.add(Reshape((1,64)))
+        model.add(LSTM(64))
         # Dence2 -> 2
         model.add(Dense(2))
         model.load_weights("../weights/"+WEIGHT_NAME)

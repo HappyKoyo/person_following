@@ -14,7 +14,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 5
+EPOCHS = 100
 
 # Initial Setting
 model = models.Sequential()
@@ -43,7 +43,7 @@ model.add(Dense(2))
 model.compile(optimizer='adam',
               loss=losses.mean_squared_error,
               metrics=['accuracy'])
-keras.optimizers.Adam(lr=0.0003,beta_1=0.9,beta_2=0.999,epsilon=None,decay=0.0)
+keras.optimizers.Adam(lr=0.03,beta_1=0.9,beta_2=0.999,epsilon=None,decay=0.0)
 
 
 # --- Optimize Model ---
@@ -76,7 +76,7 @@ for i in range(EPOCHS):
         # compose color and depth
         train_rgbd  = np.append(train_color,train_depth,axis=3)
 
-        hist = model.fit(train_rgbd, train_joy,batch_size=128,verbose=1,epochs=1,validation_split=0.0)
+        hist = model.fit(train_rgbd, train_joy,batch_size=128,verbose=0,epochs=1,validation_split=0.0)
         epoch_train_loss.append(hist.history["loss"][0])
         
     # --- Evaluate Using Load Cross-Validation Set ---

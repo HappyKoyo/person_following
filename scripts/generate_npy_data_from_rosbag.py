@@ -16,7 +16,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 # Const definision
-DATA_LENGTH = 128
+DATA_LENGTH = 512
 DIR_TYPE = "train"# train, val or test. 
 
 class GenTrainData:
