@@ -65,7 +65,7 @@ class GenTrainData:
         return joy_data
 
     def main(self):
-        r = rospy.Rate(10) # main loop Hz
+        r = rospy.Rate(1) # main loop Hz
         img_num = 0
         # create first black image
         all_color = np.zeros(84*84*3).reshape(1,84,84,3)

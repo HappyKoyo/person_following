@@ -14,7 +14,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 100
+EPOCHS = 50
 
 # Initial Setting
 model = models.Sequential()
@@ -76,7 +76,7 @@ for i in range(EPOCHS):
         # compose color and depth
         train_rgbd  = np.append(train_color,train_depth,axis=3)
 
-        hist = model.fit(train_rgbd, train_joy,batch_size=128,verbose=0,epochs=1,validation_split=0.0)
+        hist = model.fit(train_rgbd, train_joy,batch_size=512,verbose=0,epochs=1,validation_split=0.0)
         epoch_train_loss.append(hist.history["loss"][0])
         
     # --- Evaluate Using Load Cross-Validation Set ---
@@ -91,7 +91,7 @@ for i in range(EPOCHS):
         # compose color and depth image (128,84,84,4)
         val_rgbd  = np.append(val_color,val_depth,axis=3)
         # append to all rgbd and joy data
-        val_loss = model.evaluate(val_rgbd,val_joy,batch_size=128)
+        val_loss = model.evaluate(val_rgbd,val_joy,batch_size=512)
         epoch_val_loss.append(val_loss)
 
     train_loss_avg = np.average(epoch_train_loss)

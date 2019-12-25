@@ -14,8 +14,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 # Const definision
-DATA_LENGTH = 128
-TARGET_DIR = "../data/train/"
+TARGET_DIR = "../data/val/"
 TARGET_FILES = os.listdir(TARGET_DIR+"color")
 
 for data in TARGET_FILES:
