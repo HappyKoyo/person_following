@@ -14,7 +14,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 50
+EPOCHS = 15
 
 # Initial Setting
 model = models.Sequential()
