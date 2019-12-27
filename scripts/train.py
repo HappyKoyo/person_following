@@ -14,14 +14,14 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 15
+EPOCHS = 25
 
 # Initial Setting
 model = models.Sequential()
 
 # --- Model Description ---
 # Conv1 84 -> 40
-model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,4)))
+model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,1)))
 model.add(BatchNormalization())
 # Conv2 40 -> 18
 model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu'))
@@ -29,14 +29,17 @@ model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu'))
 model.add(Conv2D(64, kernel_size=5, strides=(2,2), activation='relu'))
 # Flatten 7*7*64 -> 3136
 model.add(Flatten())
-model.add(Dense(128,activation="relu"))
+#model.add(Dense(128,activation="relu"))
+#model.add(Dropout(0.3))
 model.add(Dense(64,activation="relu"))
+model.add(Dropout(0.3))
 # LSTM
 model.add(Reshape((1,64)))
 model.add(LSTM(64))
-model.add(Reshape((1,64)))
-model.add(LSTM(64))
-# Dence2 -> 2
+#model.add(Reshape((1,64)))
+#model.add(LSTM(64))
+# Dence2 -> 25
+#model.add(Dense(30))
 model.add(Dense(2))
 
 # --- Optimize Manner ---
@@ -70,13 +73,13 @@ for i in range(EPOCHS):
     for data in train_data_list:
         #print data
 
-        train_color = np.load("../data/train/color/"+data)
+        #train_color = np.load("../data/train/color/"+data)
         train_depth = np.load("../data/train/depth/"+data)
         train_joy   = np.load("../data/train/joy/"+data)
         # compose color and depth
-        train_rgbd  = np.append(train_color,train_depth,axis=3)
+        #train_rgbd  = np.append(train_color,train_depth,axis=3)
 
-        hist = model.fit(train_rgbd, train_joy,batch_size=512,verbose=0,epochs=1,validation_split=0.0)
+        hist = model.fit(train_depth, train_joy,batch_size=512,verbose=0,epochs=1,validation_split=0.0)
         epoch_train_loss.append(hist.history["loss"][0])
         
     # --- Evaluate Using Load Cross-Validation Set ---
@@ -85,13 +88,13 @@ for i in range(EPOCHS):
     random.shuffle(val_data_list)
 
     for data in val_data_list:
-        val_color = np.load("../data/val/color/"+data)
+        #val_color = np.load("../data/val/color/"+data)
         val_depth = np.load("../data/val/depth/"+data)
         val_joy   = np.load("../data/val/joy/"+data)
         # compose color and depth image (128,84,84,4)
-        val_rgbd  = np.append(val_color,val_depth,axis=3)
+        #val_rgbd  = np.append(val_color,val_depth,axis=3)
         # append to all rgbd and joy data
-        val_loss = model.evaluate(val_rgbd,val_joy,batch_size=512)
+        val_loss = model.evaluate(val_depth,val_joy,batch_size=512)
         epoch_val_loss.append(val_loss)
 
     train_loss_avg = np.average(epoch_train_loss)
@@ -100,6 +103,10 @@ for i in range(EPOCHS):
     val_hist.append(val_loss_avg)
     hist_cnt += 1
     print str(hist_cnt)+"th Epoch"
+
+    time_now = str(time.time())
+    model.save_weights("../weights/"+time_now+"_"+str(i)+".h5")
+    print "Saved weight"
 
 # --- Display Trainig Loss ---
 plt.plot(range(1,hist_cnt+1),train_hist,label="Training Loss")

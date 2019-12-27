@@ -73,6 +73,7 @@ class GenTrainData:
         all_depth = np.zeros(84*84*1).reshape(1,84,84,1)
         all_depth = all_depth.astype(np.uint8)
         all_joy   = np.zeros(2).reshape(1,2)
+
         while not rospy.is_shutdown() and img_num < DATA_LENGTH:
             r.sleep()
             img_num = img_num + 1
@@ -81,20 +82,29 @@ class GenTrainData:
             color_data = self.getTrainColor()
             depth_data = self.getTrainDepth()
             joy_data   = self.getTrainJoy()
-
+            #print joy_data
             all_color = np.append(all_color,color_data,axis=0)
             all_depth = np.append(all_depth,depth_data,axis=0)
             all_joy   = np.append(all_joy,joy_data,axis=0)
+            
 
         # delete first black image
         train_color = np.delete(all_color,0,axis=0)
         train_depth = np.delete(all_depth,0,axis=0)
         train_joy   = np.delete(all_joy,0,axis=0)
+
+        print train_joy
+
         # save each data
         time = str(rospy.get_time())
         np.save('../data/'+DIR_TYPE+'/color/'+time+'.npy',train_color)
         np.save('../data/'+DIR_TYPE+'/depth/'+time+'.npy',train_depth)
         np.save('../data/'+DIR_TYPE+'/joy/'+time+'.npy',train_joy)
+        #plt.plot(range(0,DATA_LENGTH),train_joy,label="saved joy data")
+        #plt.xlabel("Epochs")
+        #plt.ylabel("Loss")
+        #plt.legend(loc="upper right")
+        #plt.show()
         print "training data "+time+".npy is saved in /data/"+DIR_TYPE+"/train/npy/ each director."
 
 if __name__ == '__main__':
