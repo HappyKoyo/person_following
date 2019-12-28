@@ -46,7 +46,7 @@ class PersonFollow:
     def getRGBD(self):
         # convert depth image to (float64, 1*128*128)
         resized_depth_img = cv2.resize(self.depth_img,dsize=(84,84))
-        resized_depth_img = resized_depth_img.reshape(1,84,84,1)
+        resizesized_depth_img = resized_depth_img.reshape(1,84,84,1)
 
         # reshape the color image, and compose the depth and the color image
         resized_color_img = cv2.resize(self.color_img,dsize=(84,84))
@@ -63,7 +63,7 @@ class PersonFollow:
         # --- Model Description ---
         model = models.Sequential()
         # Conv1 84 -> 40
-        model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,1)))
+        model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,4)))
         model.add(BatchNormalization())
         # Conv2 40 -> 18
         model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu'))

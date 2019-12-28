@@ -14,7 +14,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 # Const definision
-TARGET_DIR = "../data/val/"
+TARGET_DIR = "../data/train/"
 TARGET_FILES = os.listdir(TARGET_DIR+"color")
 
 # --- generate left-right Miller data ---
@@ -37,7 +37,7 @@ print "mirrored data is saved"
 #beta = 0.0
 #illuminated_color = np.clip(alpha*target_color+beta,0,255).astype(np.uint8)
 
-"""
+
 TARGET_FILES = os.listdir(TARGET_DIR+"color")
 # --- generate rgb swap data ---
 for data in TARGET_FILES:
@@ -76,6 +76,5 @@ for data in TARGET_FILES:
     #plt.imshow(mirrored_color[0])
     #plt.pause(2)
     print "rgb swap data is saved"
-"""
 
 print "fin"
