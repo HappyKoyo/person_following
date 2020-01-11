@@ -1,43 +1,19 @@
 #!/usr/bin/env python
 
-# ROS
-import rospy
-
-# GENERAL
-import cv2
+# General
 import numpy as np
-from cv_bridge import CvBridge, CvBridgeError
-from sensor_msgs.msg import Image
+import random
+import matplotlib.pyplot as plt
+import os
 
-class CheckImage:
-    def __init__(self):
-        self.color_image_sub = rospy.Subscriber('/camera/color/image_raw',Image,self.ColorImageCB)
-        self.depth_image_sub = rospy.Subscriber('/camera/depth/image_rect_raw',Image,self.DepthImageCB)
-        self.resized_color_pub = rospy.Publisher('/resized/color', Image, queue_size=1)
-        self.resized_depth_pub = rospy.Publisher('/resized/depth', Image, queue_size=1)
+VAL_DIR   = os.listdir("../data/train/color")
 
-        self.bridge = CvBridge()
-        
-    def ColorImageCB(self,msg):
-        try:
-            self.color_img = self.bridge.imgmsg_to_cv2(msg)
-            self.resized_image = self.color_img
-            resized_image = cv2.resize(self.color_img,dsize=(128,128))
-            resized_image = self.bridge.cv2_to_imgmsg(resized_image,"rgb8")
-            self.resized_color_pub.publish(resized_image)
-        except CvBridgeError as error_msg:
-            print(error_msg)
+for data in VAL_DIR:
+    val_color = np.load("../data/train/color/"+data)
+    val_depth = np.load("../data/train/depth/"+data)
+    val_joy   = np.load("../data/train/joy/"+data)
+    for i in range(0,512):
+        plt.imshow(val_color[i])
+        plt.pause(0.01)
+    print str(data)+" is finished."
 
-    def DepthImageCB(self,msg):
-        try:
-            self.depth_img = self.bridge.imgmsg_to_cv2(msg)
-            resized_image = cv2.resize(self.depth_img,dsize=(128,128))
-            resized_image = self.bridge.cv2_to_imgmsg(resized_image,"mono16")
-            self.resized_depth_pub.publish(resized_image)
-        except CvBridgeError as error_msg:
-            print(error_msg)
-
-if __name__ == '__main__':
-    rospy.init_node('check_image',anonymous=True)
-    ci = CheckImage()
-    rospy.spin()

@@ -18,7 +18,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1577428371.08.h5"
+WEIGHT_NAME = "last1578390133.13.h5"
 
 class PersonFollow:
     def __init__(self):
@@ -46,15 +46,15 @@ class PersonFollow:
     def getRGBD(self):
         # convert depth image to (float64, 1*128*128)
         resized_depth_img = cv2.resize(self.depth_img,dsize=(84,84))
-        resizesized_depth_img = resized_depth_img.reshape(1,84,84,1)
+        resized_depth_img = resized_depth_img.reshape(1,84,84,1)
 
         # reshape the color image, and compose the depth and the color image
         resized_color_img = cv2.resize(self.color_img,dsize=(84,84))
         resized_color_img = resized_color_img.reshape(1,84,84,3)
         
         # compose color and depth image (1,84,84,4)
-        resized_rgbd_img  = np.append(resized_color_img,resized_depth_img,axis=3)
-        print resized_rgbd_img
+        #resized_rgbd_img  = np.append(resized_color_img,resized_depth_img,axis=3)
+        #print resized_rgbd_img
         return resized_depth_img#resized_rgbd_img
 
     def main(self):
@@ -63,7 +63,7 @@ class PersonFollow:
         # --- Model Description ---
         model = models.Sequential()
         # Conv1 84 -> 40
-        model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,4)))
+        model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,1)))
         model.add(BatchNormalization())
         # Conv2 40 -> 18
         model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu'))
@@ -71,15 +71,15 @@ class PersonFollow:
         model.add(Conv2D(64, kernel_size=5, strides=(2,2), activation='relu'))
         # Flatten 7*7*64 -> 3136
         model.add(Flatten())
-        #model.add(Dense(128,activation="relu"))
-        #model.add(Dropout(0.3))
+        model.add(Dense(128,activation="relu"))
+        model.add(Dropout(0.3))
         model.add(Dense(64,activation="relu"))
-        model.add(Dropout(0.2))
+        model.add(Dropout(0.3))
         # LSTM
         model.add(Reshape((1,64)))
         model.add(LSTM(64))
-        #model.add(Reshape((1,64)))
-        #model.add(LSTM(64))
+        model.add(Reshape((1,64)))
+        model.add(LSTM(64))
         # Dence2 -> 2
         #model.add(Dense(30))
         model.add(Dense(2))
