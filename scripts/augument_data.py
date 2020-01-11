@@ -14,7 +14,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 
 # Const definision
-TARGET_DIR = "../data/val/"
+TARGET_DIR = "../data/train/"
 TARGET_FILES = os.listdir(TARGET_DIR+"color")
 
 # --- generate left-right Miller data ---

@@ -12,7 +12,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "last1578703181.65.h5"
+WEIGHT_NAME = "1578731520.16_5.h5"
 
 # --- Model Description ---
 model = models.Sequential()

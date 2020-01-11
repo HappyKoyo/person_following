@@ -14,7 +14,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, LSTM, Reshape
 from keras.layers.normalization import BatchNormalization
 
 # Constant Definition
-EPOCHS = 15
+EPOCHS = 10
 
 # Initial Setting
 model = models.Sequential()
@@ -44,8 +44,8 @@ model.add(LSTM(64))
 model.add(Dense(2))
 
 # --- load Weight ---
-#WEIGHT_NAME = "last1578466730.27.h5"
-#model.load_weights("../weights/"+WEIGHT_NAME)
+WEIGHT_NAME = "last1578730941.1.h5"
+model.load_weights("../weights/"+WEIGHT_NAME)
 
 
 # --- Optimize Manner ---
@@ -140,6 +140,7 @@ for i in range(EPOCHS):
         val_depth = np.load("../data/val/depth/"+data)
         val_joy   = np.load("../data/val/joy/"+data)
         val_joy[:,1] = val_joy[:,1]/3
+        val_joy[:,0] = np.zeros(512)
         # compose color and depth image (128,84,84,4)
         #val_rgbd  = np.append(val_color,val_depth,axis=3)
         # append to all rgbd and joy data
