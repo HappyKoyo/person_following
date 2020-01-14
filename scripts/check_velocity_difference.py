@@ -12,12 +12,12 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1578731520.16_5.h5"
+WEIGHT_NAME = "1579002517.73_8.h5"
 
 # --- Model Description ---
 model = models.Sequential()
 # Conv1 84 -> 40
-model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,1)))
+model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,4)))
 #model.add(Conv2D(32, kernel_size=5, strides=(2,2), activation='relu', input_shape=(84,84,1)))
 
 model.add(BatchNormalization())
@@ -41,30 +41,30 @@ model.add(LSTM(64))
 model.add(Dense(2))
 model.load_weights("../weights/"+WEIGHT_NAME)
 
-VAL_DIR   = os.listdir("../data/val/color")
+VAL_DIR   = os.listdir("../data/train/color")
 
 #for data in VAL_DIR:
 #    val_data_list.append(data)
 #random.shuffle(val_data_list)
 
 for data in VAL_DIR:
-    #val_color = np.load("../data/train/color/"+data)
-    val_depth = np.load("../data/val/depth/"+data)
-    val_joy   = np.load("../data/val/joy/"+data)
+    val_color = np.load("../data/train/color/"+data)
+    val_depth = np.load("../data/train/depth/"+data)
+    val_joy   = np.load("../data/train/joy/"+data)
     val_joy[:,1] = val_joy[:,1]/3
     print data
-    #val_rgbd = np.append(val_color,val_depth,axis=3)
-    #val_depth = val_depth.reshape(512,84,84,1)
+    val_depth = val_depth.reshape(512,84,84,1)
+    val_rgbd = np.append(val_color,val_depth,axis=3)
     velocities = []
     val_data_list = []
 
     for i in range(0,512):
-        #rgbd = val_rgbd[i]
-        #rgbd = rgbd.reshape(1,84,84,4)
-        #vel = model.predict(rgbd)
-        depth = val_depth[i]
-        depth = depth.reshape(1,84,84,1)
-        vel = model.predict(depth)
+        rgbd = val_rgbd[i]
+        rgbd = rgbd.reshape(1,84,84,4)
+        vel = model.predict(rgbd)
+        #depth = val_depth[i]
+        #depth = depth.reshape(1,84,84,1)
+        #vel = model.predict(depth)
         velocities.append(vel)
     
 
