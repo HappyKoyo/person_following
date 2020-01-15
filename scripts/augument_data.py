@@ -22,13 +22,17 @@ for data in TARGET_FILES:
     target_color = np.load(TARGET_DIR+"color/"+data)
     target_depth = np.load(TARGET_DIR+"depth/"+data)
     target_joy   = np.load(TARGET_DIR+"joy/"+data)
+    target_pose  = np.load(TARGET_DIR+"pose/"+data)
     
     mirrored_color = target_color[:,:,::-1,:]
     mirrored_depth = target_depth[:,:,::-1,:]
     mirrored_joy   = np.dot(target_joy,np.array([[1,0],[0,-1]]))
+    mirrored_pose  = -target_pose
+
     np.save(TARGET_DIR+"color/mirrored"+data,mirrored_color)
     np.save(TARGET_DIR+"depth/mirrored"+data,mirrored_depth)
     np.save(TARGET_DIR+"joy/mirrored"+data,mirrored_joy)
+    np.save(TARGET_DIR+"pose/mirrored"+data,mirrored_pose)
     print "mirrored "+data+" is saved"
 print "mirrored data is saved"
     

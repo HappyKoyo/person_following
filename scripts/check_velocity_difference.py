@@ -12,7 +12,7 @@ from keras import layers,models,losses
 from keras.layers import Dense, Conv2D, Flatten, Dropout, Reshape, LSTM
 from keras.layers.normalization import BatchNormalization
 
-WEIGHT_NAME = "1579002517.73_8.h5"
+WEIGHT_NAME = "last1579085973.21.h5"
 
 # --- Model Description ---
 model = models.Sequential()
@@ -38,20 +38,24 @@ model.add(Reshape((1,64)))
 model.add(LSTM(64))
 # Dence2 -> 2
 #model.add(Dense(30))
-model.add(Dense(2))
+model.add(Dense(3))
 model.load_weights("../weights/"+WEIGHT_NAME)
 
-VAL_DIR   = os.listdir("../data/train/color")
+VAL_DIR   = os.listdir("../data/val/color")
 
 #for data in VAL_DIR:
 #    val_data_list.append(data)
 #random.shuffle(val_data_list)
 
 for data in VAL_DIR:
-    val_color = np.load("../data/train/color/"+data)
-    val_depth = np.load("../data/train/depth/"+data)
-    val_joy   = np.load("../data/train/joy/"+data)
+    val_color = np.load("../data/val/color/"+data)
+    val_depth = np.load("../data/val/depth/"+data)
+    val_joy   = np.load("../data/val/joy/"+data)
+    val_pose  = np.load("../data/val/pose/"+data)
     val_joy[:,1] = val_joy[:,1]/3
+    val_pose  = val_pose.reshape(512,1)
+    val_output = np.append(val_joy,val_pose,axis=1)
+
     print data
     val_depth = val_depth.reshape(512,84,84,1)
     val_rgbd = np.append(val_color,val_depth,axis=3)
@@ -72,7 +76,7 @@ for data in VAL_DIR:
     #velocities = velocities.reshape(2,512)
     #val_joy = val_joy.reshape(2,512)
     print val_joy
-    plt.plot(range(0,512),val_joy[:,0],label="teaching linear")
+    plt.plot(range(0,512),val_output[:,0],label="teaching linear")
     print velocities.shape
     plt.plot(range(0,512),velocities[:,:,0],label="predicting linear")
     plt.xlabel("Epochs")
@@ -80,10 +84,21 @@ for data in VAL_DIR:
     plt.legend(loc="upper right")
     plt.show()
 
-    plt.plot(range(0,512),val_joy[:,1],label="teaching roll")
+    plt.plot(range(0,512),val_output[:,1],label="teaching roll")
     plt.plot(range(0,512),velocities[:,:,1],label="predicting roll")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.legend(loc="upper right")
     plt.show()
+
+    plt.plot(range(0,512),val_output[:,2],label="train person pose")
+    plt.plot(range(0,512),velocities[:,:,2],label="predicting person pose")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend(loc="upper right")
+    plt.show()
+
+    # --- Save to CSV ---
+    np.savetxt("val_roll.csv",val_joy[:,1],delimiter=',')
+    np.savetxt("predict_roll.csv",velocities[:,:,1],delimiter=',')
 
